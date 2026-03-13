@@ -7,24 +7,26 @@ import type { Metadata } from "next";
 export const metadata: Metadata = { title: "Shop" };
 
 interface BrowsePageProps {
-  searchParams: {
+  searchParams: Promise<{
     gender?: GenderTarget;
     age?: AgeGroup;
     category?: string;
-  };
+  }>;
 }
 
 export default async function BrowsePage({ searchParams }: BrowsePageProps) {
+  const { gender, age } = await searchParams;
+
   const products = await getProducts({
-    gender_target: searchParams.gender,
-    age_group: searchParams.age,
+    gender_target: gender,
+    age_group: age,
   });
 
   return (
     <div className="container browse-layout">
       <FilterSidebar
-        activeGender={searchParams.gender}
-        activeAge={searchParams.age}
+        activeGender={gender}
+        activeAge={age}
       />
       <section>
         <p>{products.length} products</p>
