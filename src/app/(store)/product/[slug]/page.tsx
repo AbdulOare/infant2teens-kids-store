@@ -6,16 +6,18 @@ import ReviewList from "@/components/reviews/ReviewList";
 import type { Metadata } from "next";
 
 interface ProductPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   return { title: product?.name ?? "Product" };
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   return (
