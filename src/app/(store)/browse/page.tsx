@@ -1,55 +1,32 @@
-import { getProductBySlug } from "@/lib/products";
-import { notFound } from "next/navigation";
-import ProductImages from "@/components/product/ProductImages";
-import VariantPicker from "@/components/product/VariantPicker";
-import ReviewList from "@/components/reviews/ReviewList";
+import { getProducts } from "@/lib/products";
+import ProductGrid from "@/components/product/ProductGrid";
+import FilterSidebar from "@/components/product/FilterSidebar";
+import type { AgeGroup, GenderTarget } from "@/types/database";
 import type { Metadata } from "next";
-import { cache } from "react";
 
-interface ProductPageProps {
-  params: { slug: string };
-}
+export const metadata: Metadata = { title: "Shop" };
 
-const getCachedProduct = cache(async (slug: string) => {
-  return getProductBySlug(slug);
-});
+export default async function BrowsePage({
+  searchParams,
+}: {
+  searchParams: any;
+}) {
+  const params = await searchParams;
+  const gender = params?.gender as GenderTarget | undefined;
+  const age = params?.age as AgeGroup | undefined;
 
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await getCachedProduct(params.slug);
-
-  if (!product) {
-    return { title: "Product Not Found" };
-  }
-
-  return {
-    title: product.name,
-    description: product.description,
-    openGraph: {
-      title: product.name,
-      description: product.description,
-      images: product.images?.[0],
-    },
-  };
-}
-
-export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getCachedProduct(params.slug);
-
-  if (!product) notFound();
+  const products = await getProducts({
+    gender_target: gender,
+    age_group: age,
+  });
 
   return (
-    <div className="container product-layout">
-      <ProductImages images={product.images ?? []} name={product.name} />
-
-      <div className="product-info">
-        {product.brand && <p className="brand-name">{product.brand.name}</p>}
-        <h1>{product.name}</h1>
-        <p>{product.description}</p>
-
-        <VariantPicker variants={product.variants} />
-      </div>
-
-      <ReviewList productId={product.id} />
+    <div className="container browse-layout">
+      <FilterSidebar activeGender={gender} activeAge={age} />
+      <section>
+        <p>{products.length} products</p>
+        <ProductGrid products={products} />
+      </section>
     </div>
   );
 }
