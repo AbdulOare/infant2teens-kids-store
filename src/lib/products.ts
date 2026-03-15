@@ -19,7 +19,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
       *,
       brand:brands(*),
       category:categories(*),
-      images:product_images(* order: position asc),
+      images:product_images(*),
       variants:product_variants(*)
     `)
     .eq("is_active", true)
