@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { formatNGN, formatDate } from "@/lib/utils";
@@ -6,12 +7,9 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Order Details" };
 
-interface OrderPageProps {
-  params: { id: string };
-  searchParams: { success?: string };
-}
-
-export default async function OrderPage({ params, searchParams }: OrderPageProps) {
+export default async function OrderPage(props: any) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
   const supabase = await createClient();
 
   const { data: order } = await supabase
@@ -35,7 +33,7 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
 
   return (
     <div className="container order-detail">
-      {searchParams.success && (
+      {searchParams?.success && (
         <div className="success-banner">
           Payment confirmed. Your order is being processed.
         </div>
@@ -49,7 +47,6 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
         <OrderStatusBadge status={order.status} />
       </div>
 
-      {/* Tracking info */}
       {order.tracking_number && (
         <div className="tracking-card">
           <p>Courier: {order.courier}</p>
@@ -59,7 +56,6 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
         </div>
       )}
 
-      {/* Items */}
       <section>
         <h2>Items</h2>
         {order.items?.map((item: any) => (
@@ -77,7 +73,6 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
         ))}
       </section>
 
-      {/* Totals */}
       <section className="order-totals">
         <div className="summary-row">
           <span>Subtotal</span>
@@ -99,7 +94,6 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
         </div>
       </section>
 
-      {/* Delivery address */}
       <section>
         <h2>Delivered to</h2>
         <p>{order.address?.street}</p>
