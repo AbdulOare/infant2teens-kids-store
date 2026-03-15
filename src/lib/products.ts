@@ -32,7 +32,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return (data ?? []) as ProductWithRelations[];
 }
 
 export async function getProductBySlug(slug: string): Promise<ProductWithRelations | null> {
@@ -44,7 +44,7 @@ export async function getProductBySlug(slug: string): Promise<ProductWithRelatio
       *,
       brand:brands(*),
       category:categories(*),
-      images:product_images(* order: position asc),
+      images:product_images(*),
       variants:product_variants(*)
     `)
     .eq("slug", slug)
@@ -52,7 +52,7 @@ export async function getProductBySlug(slug: string): Promise<ProductWithRelatio
     .single();
 
   if (error) return null;
-  return data;
+  return data as ProductWithRelations;
 }
 
 export async function getCategories() {
