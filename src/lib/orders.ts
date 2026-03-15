@@ -111,7 +111,7 @@ export async function getUserOrders() {
         *,
         variant:product_variants(
           *,
-          product:products(*, images:product_images(* order: position asc))
+          product:products(*, images:product_images(*))
         )
       )
     `)
