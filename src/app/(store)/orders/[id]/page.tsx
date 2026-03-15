@@ -22,7 +22,7 @@ export default async function OrderPage(props: any) {
         *,
         variant:product_variants(
           *,
-          product:products(*, images:product_images(* order: position asc))
+          product:products(*, images:product_images(*))
         )
       )
     `)
@@ -41,24 +41,24 @@ export default async function OrderPage(props: any) {
 
       <div className="order-header">
         <div>
-          <h1>Order #{order.id.slice(0, 8).toUpperCase()}</h1>
-          <p>{formatDate(order.placed_at)}</p>
+          <h1>Order #{(order as any).id.slice(0, 8).toUpperCase()}</h1>
+          <p>{formatDate((order as any).placed_at)}</p>
         </div>
-        <OrderStatusBadge status={order.status} />
+        <OrderStatusBadge status={(order as any).status} />
       </div>
 
-      {order.tracking_number && (
+      {(order as any).tracking_number && (
         <div className="tracking-card">
-          <p>Courier: {order.courier}</p>
-          <p>Tracking: {order.tracking_number}</p>
-          {order.shipped_at && <p>Shipped: {formatDate(order.shipped_at)}</p>}
-          {order.delivered_at && <p>Delivered: {formatDate(order.delivered_at)}</p>}
+          <p>Courier: {(order as any).courier}</p>
+          <p>Tracking: {(order as any).tracking_number}</p>
+          {(order as any).shipped_at && <p>Shipped: {formatDate((order as any).shipped_at)}</p>}
+          {(order as any).delivered_at && <p>Delivered: {formatDate((order as any).delivered_at)}</p>}
         </div>
       )}
 
       <section>
         <h2>Items</h2>
-        {order.items?.map((item: any) => (
+        {(order as any).items?.map((item: any) => (
           <div key={item.id} className="order-item-row">
             <div className="order-item-info">
               <p className="item-name">{item.variant?.product?.name}</p>
@@ -76,28 +76,28 @@ export default async function OrderPage(props: any) {
       <section className="order-totals">
         <div className="summary-row">
           <span>Subtotal</span>
-          <span>{formatNGN(order.subtotal_ngn)}</span>
+          <span>{formatNGN((order as any).subtotal_ngn)}</span>
         </div>
-        {order.discount_amount > 0 && (
+        {(order as any).discount_amount > 0 && (
           <div className="summary-row">
             <span>Discount</span>
-            <span>- {formatNGN(order.discount_amount)}</span>
+            <span>- {formatNGN((order as any).discount_amount)}</span>
           </div>
         )}
         <div className="summary-row">
           <span>Delivery</span>
-          <span>{formatNGN(order.delivery_fee)}</span>
+          <span>{formatNGN((order as any).delivery_fee)}</span>
         </div>
         <div className="summary-row total">
           <span>Total</span>
-          <span>{formatNGN(order.total_ngn)}</span>
+          <span>{formatNGN((order as any).total_ngn)}</span>
         </div>
       </section>
 
       <section>
         <h2>Delivered to</h2>
-        <p>{order.address?.street}</p>
-        <p>{order.address?.city}, {order.address?.state}</p>
+        <p>{(order as any).address?.street}</p>
+        <p>{(order as any).address?.city}, {(order as any).address?.state}</p>
       </section>
     </div>
   );
